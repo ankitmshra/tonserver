@@ -2,7 +2,7 @@ import { RouteConfig } from "@medusajs/admin"
 import Medusa from "@medusajs/medusa-js"
 import React, { useEffect, useState } from 'react';
 import axios, { AxiosRequestConfig } from 'axios';
-import { useAdminCreateProduct } from "medusa-react";
+import { useAdminCollections, useAdminCreateCollection, useAdminCreateProduct } from "medusa-react";
 import { AdminPostProductsReq } from "@medusajs/medusa";
 import './style.css'
 
@@ -10,6 +10,22 @@ type CreateProductData = {
   title: string;
   is_giftcard: false;
   discountable: false;
+  collection_id: string;
+  thumbnail:string;
+  images:string[];
+  options: {
+    title: string
+  }[];
+  variants: {
+    title: string
+    prices: {
+      amount: number
+      currency_code :string
+    }[]
+    options: {
+      value: string
+    }[]
+  }[];
   
 };
 type Product = {
@@ -35,6 +51,15 @@ type Product = {
     // Add more fields as needed
   };
   
+  interface CollectionT {
+    id: string;
+    title: string;
+  }
+  
+  interface ProductS {
+    product_number: string;
+    category: string;
+  }
 
 const CreateProduct = () => {
   const createProduct = useAdminCreateProduct();
@@ -48,9 +73,14 @@ const CreateProduct = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [singleProductData, setSingleProductData] = useState('')
   const baseUrl ="https://www.alphabroder.com/media/hires";
-  
+  const { collections, isLoading } = useAdminCollections();
+  const createCollection = useAdminCreateCollection();
 
- 
+
+
+  
+  
+  
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
@@ -70,7 +100,7 @@ const CreateProduct = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://0.0.0.0:3050/api/products/?page=1&page_size=32",
+          "http://13.51.207.54/api/products/?page=1&page_size=32",
           {
             headers: {
               accept: "application/json",
@@ -94,20 +124,94 @@ const CreateProduct = () => {
   const handleExportClick = async (productNumber) => {
     try {
       const response = await axios.get(
-        `http://0.0.0.0:3050/api/${productNumber}/`,
+        `http://13.51.207.54/api/${productNumber}/`,
         {
           headers: {
             accept: "application/json",
           },
         }
       );
+      // const collectionsT: CollectionT[] = collections;
+      // const productsT: ProductS[] = response.data;
+      // function findCollectionId(productsT: ProductS[], collectionsT: CollectionT[]): string | null {
+      //   for (const product of productsT) {
+      //     for (const collection of collectionsT) {
+      //       if (product.category === collection.title) {
+      //         return collection.id;
+      //       }
+      //     }
+      //   }
+      //   return null;
+      // }
       
-     
+      // const collectionId = findCollectionId(productsT, collectionsT);
+      // console.log("Collection ID:", collectionId);
+      
   const handleCreate = () => {
+    console.log(collections);
     const productData: CreateProductData = {
         title: response.data.short_description,
         is_giftcard: false,
         discountable: false,
+        collection_id:"pcol_01HP1QGVSS0Y4AJ5K7AXDCG6SH",
+        thumbnail:"https://medusa-public-images.s3.eu-west-1.amazonaws.com/sweatpants-gray-front.png",
+        images:["https://medusa-public-images.s3.eu-west-1.amazonaws.com/sweatpants-gray-front.png"],
+        options:[
+          {
+          
+            "title": "XL",
+          },
+          {
+
+            "title": "green",
+          }
+        ],
+        variants:[
+          {
+            "title": "Green XL",
+            "options": [
+              {
+              
+                "value": "XL",
+              },
+              {
+
+                "value": "green",
+              }
+            ],
+            "prices": [
+              {
+                "currency_code": "usd",
+                "amount": 20000,
+               
+              },
+          
+            ],
+
+          },
+          {
+            "title": "Green XXL",
+            "options": [
+              {
+              
+                "value": "XXL",
+              },
+              {
+
+                "value": "green",
+              }
+            ],
+            "prices": [
+              {
+                "currency_code": "usd",
+                "amount": 10000,
+               
+              },
+          
+            ],
+
+          }
+        ]
         
       }
     createProduct.mutate(productData as AdminPostProductsReq, {
@@ -148,7 +252,7 @@ const CreateProduct = () => {
     <div>
     <div className="headerTab">
         <div>
-            <h1>Alphaborder</h1>
+            <h1>Alphabroder</h1>
         </div>
         <input
           type="text"

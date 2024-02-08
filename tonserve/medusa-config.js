@@ -1,4 +1,5 @@
 const dotenv = require("dotenv");
+const SHIPPO_API_KEY = process.env.SHIPPO_API_KEY
 
 let ENV_FILE_NAME = "";
 switch (process.env.NODE_ENV) {
@@ -55,20 +56,19 @@ const plugins = [
   {
     resolve: `medusa-fulfillment-shippo`,
       options: {
-        api_key: 'shippo_test_161966c0f1acab9525e3e67f193232df946fd5e9',
+        api_key: SHIPPO_API_KEY,
         weight_unit_type: 'g', // valid values: g, kg, lb, oz
         dimension_unit_type: 'cm', // valid values: cm, mm, in
-        webhook_secret: '51OR1hfSCPmnwrcQG6dozN4yFgmH8oMf3mf66uYLT2JyloXtMGO3hvlQdwuf0SvIwTbbs0SEneYV', // README section on webhooks before using!
+        webhook_secret: '', // README section on webhooks before using!
         webhook_test_mode: true
       },
   },
-  /*{
+  {
     resolve: `medusa-payment-stripe`,
     options: {
-      api_key: 'sk_test_51OR1hfSCPmnwrcQG6dozN4yFgmH8oMf3mf66uYLT2JyloXtMGO3hvlQdwuf0SvIwTbbs0SEneYV0zIoZ7i4Xisew00gV35ZCgB',
-      webhook_secret: 'we_1OhAUySCPmnwrcQGNQe5GQg6',
+      api_key: process.env.STRIPE_API_KEY,
     },
-  },*/
+  },
 ];
 
 const modules = {
