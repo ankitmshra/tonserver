@@ -69,6 +69,12 @@ const plugins = [
       api_key: process.env.STRIPE_API_KEY,
     },
   },
+  {
+    resolve: 'medusa-plugin-variant-images',
+    options: {
+      enableUI: true,
+    },
+  },
 ];
 
 const modules = {
@@ -84,6 +90,17 @@ const modules = {
       redisUrl: REDIS_URL
     }
   },*/
+  inventoryService: {
+    resolve: "@medusajs/inventory",
+  },
+  stockLocationService: {
+    resolve: "@medusajs/stock-location",
+  },
+};
+
+const featureFlags = {
+  tax_inclusive_pricing: true,
+  product_categories: true,
 };
 
 /** @type {import('@medusajs/medusa').ConfigModule["projectConfig"]} */
@@ -102,5 +119,6 @@ module.exports = {
   projectConfig,
   plugins,
   modules,
+  featureFlags,
 };
 
